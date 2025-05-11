@@ -10,7 +10,7 @@ pipeline {
         
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/Dipak-Jid/html-demo.git', branch: 'master'
+                checkout scm
             }
         }
         
