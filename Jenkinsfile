@@ -6,12 +6,7 @@ pipeline {
         DOCKER_CREDENTIALS_ID = 'dockerhub-credentials'
     }
 
-    stages {
-        stage('Check Docker Version') {
-            steps {
-                sh 'docker --version'
-            }
-        }
+    stages {       
         
         stage('Checkout') {
             steps {
