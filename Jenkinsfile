@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'alpine/git' // or 'ubuntu:22.04' and install Git in a pre-step
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
-        }
-    }
+    agent any
 
     environment {
         IMAGE_NAME = 'dipakjid/hello-world-demo'
