@@ -14,5 +14,17 @@ pipeline {
             }
         }
         
+        stage('Build Docker Image') {            
+            agent {
+                docker {
+                    image 'ubuntu:22.04'        // or any image with Docker/Java installed
+                    args '-u root'              // Run as root user
+                }
+            }
+            steps {
+                sh 'docker build -t hello-world-demo .'
+            }
+        }        
+        
     }
 }
