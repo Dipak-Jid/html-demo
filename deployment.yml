@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world-demo
+  labels:
+    app: hello-world-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-world-demo
+  template:
+    metadata:
+      labels:
+        app: hello-world-demo
+    spec:
+      containers:
+        - name: hello-world-demo
+          image: dipakjid/hello-world-demo:latest
+          ports:
+            - containerPort: 8081
