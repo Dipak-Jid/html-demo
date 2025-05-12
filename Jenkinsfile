@@ -6,25 +6,36 @@ pipeline {
         DOCKER_CREDENTIALS_ID = 'dockerhub-credentials'
     }
 
-    stages {       
-        
+    stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                git url: 'https://github.com/Dipak-Jid/hello-world-html.git', branch: 'master'
             }
         }
-        
-        stage('Build Docker Image') {            
-            agent {
-                docker {
-                    image 'ubuntu:22.04'        // or any image with Docker/Java installed
-                    args '-u root'              // Run as root user
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    dockerImage = docker.build("${IMAGE_NAME}:${BUILD_NUMBER}")
                 }
             }
+        }
+
+        stage('Push to Docker Hub') {
             steps {
-                sh 'docker build -t hello-world-demo .'
+                script {
+                    docker.withRegistry('', DOCKER_CREDENTIALS_ID) {
+                        dockerImage.push("${BUILD_NUMBER}")
+                        dockerImage.push('latest')
+                    }
+                }
             }
-        }        
-        
+        }
+
+        stage('Cleanup') {
+            steps {
+                sh "docker rmi ${IMAGE_NAME}:${BUILD_NUMBER} ${IMAGE_NAME}:latest || true"
+            }
+        }
     }
 }
