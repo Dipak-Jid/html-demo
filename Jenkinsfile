@@ -31,18 +31,7 @@ pipeline {
                     }
                 }
             }
-        } 
-
-        stage('Push to Docker Hub') {
-            steps {
-                script {
-                    docker.withRegistry('', DOCKER_CREDENTIALS_ID) {
-                        dockerImage.push("${BUILD_NUMBER}")
-                        dockerImage.push('latest')
-                    }
-                }
-            }
-        }
+        }        
 
         stage('Deploy to Kubernetes') {
             steps {
