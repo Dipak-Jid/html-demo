@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/Dipak-Jid/hello-world-html.git', branch: 'master'
+                git url: 'https://github.com/Dipak-Jid/html-demo.git', branch: 'master'
             }
         }
 
