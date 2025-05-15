@@ -7,12 +7,7 @@ trigger:
 - master
 
 pool:
-  vmImage: windows-latest
+  name: Default  # Use your self-hosted agent pool name
 
 steps:
-- task: PowerShell@2
-  inputs:
-    targetType: 'inline'
-    script: |
-      Write-Host "Running on Windows agent"
-      Get-ComputerInfo | Select-Object OSName, WindowsVersion
+- script: echo "Running on self-hosted agent from Default pool"
