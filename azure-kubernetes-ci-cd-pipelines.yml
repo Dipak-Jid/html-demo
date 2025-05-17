@@ -1,0 +1,66 @@
+
+trigger:
+- master
+
+resources:
+- repo: self
+
+variables:
+  tag: '$(Build.BuildId)'
+
+stages:
+
+# Stage 1
+# Build Docker Image
+# Publish the K8S Files
+
+- stage: Build
+  displayName: Build image
+  jobs:  
+  - job: Build
+    displayName: Build
+    pool:
+      name: Default
+    steps:
+    - task: Docker@2
+      inputs:
+        containerRegistry: 'docker-hub-connection'
+        repository: 'dipakjid/hello-world-demo'
+        command: 'buildAndPush'
+        Dockerfile: '**/Dockerfile'
+        tags: '$(tag)'
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: '$(System.DefaultWorkingDirectory)'
+        Contents: '**/*.yaml'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'manifests'
+        publishLocation: 'Container'
+
+- stage: Deploy
+  displayName: Deploy image
+  jobs:  
+  - job: Deploy
+    displayName: Deploy
+    pool:
+      name: Default
+    steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        artifactName: 'manifests'
+        itemPattern: '**/*.yaml'
+        targetPath: '$(System.ArtifactsDirectory)'
+    - task: KubernetesManifest@0
+      inputs:
+        action: 'deploy'
+        kubernetesServiceConnection: 'azure-kubernetes-connection'
+        namespace: 'default'
+        manifests: '$(System.ArtifactsDirectory)/hello-world-service-deployment.yml'
+        containers: 'dipakjid/hello-world-demo:$(tag)'
+# Stage 2
+# Download the K8S Files
+# Deploy to K8S Cluster with Docker Image
